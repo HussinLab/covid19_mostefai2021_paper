@@ -2,7 +2,7 @@
 maskfile=problematic_sites_sarsCov2.2021_04_15.vcf
 
 #extract only ref from alignment :
-grep "EPI_ISL_402119" allSamples.random1kPerHap.fasta > ref.fasta
+grep -A1 "EPI_ISL_402119" allSamples.random1kPerHap.fasta > ref.fasta
 myref=ref.fasta
 
 #get the positions on the MSA that match to the reference, so we can easily extract known positions
