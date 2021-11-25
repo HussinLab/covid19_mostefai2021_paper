@@ -17,8 +17,8 @@ grep "mask" $maskfile | sed '/^#/d' | cut -f 2 > posToMask.2021_04_15.txt
 #from the MSA, print the positions that matches the columns to remove
 echo "posList=read.table(\"allPosWithIndex_fromAWK.txt\",h=F)
 toExtract=read.table(\"posToMask.2021_04_15.txt\",h=F)
-posList_kept=subset(posList,V2 %in% toExtract$V1)
-write.table(posList_kept$V1,file=\"columnsToRemove.txt\",quote=F,row.names=F)" > extract.R
+posList_kept=subset(posList,V1 %in% toExtract\$V1)
+write.table(posList_kept\$V2,file=\"columnsToRemove.txt\",quote=F,row.names=F)" > extract.R
 R CMD BATCH extract.R
 
 #convert to bed format
