@@ -1,0 +1,86 @@
+You wil need :
+ - a fasta file of multiple aligned sequences
+ - a fasta file containing the reference sequence (aligned with the previous file)
+
+####################################
+############  STEP 1 ###############
+####################################
+
+# To make a PCA, you will need first transform your multiple sequence alignement from a fasta file into this tab separated value file (tsv)
+
+# Fasta:
+>Seq1
+AATGN-AAC...
+>Seq2
+AGTGN-AAC...
+
+# Tab separated value file (tsv) :
+AATGN-AAC...    Seq1
+AGTGN-AAC...    Seq2
+
+A command line to transform a myfile.fasta to a myfile.tsv :
+
+cat myfile.fasta | awk '{c=substr($1,1,1)}c==">"{if(NR!=1){printf "%s\t%s\n",seq,id}seq="";id=substr($1,2)}c!=">"{seq=seq $1}END{printf  "%s\t%s\n",seq,id}' > myfile.tsv
+
+####################################
+############  STEP 2 ###############
+####################################
+
+Generate a "variation file" from the tsv file using the script in libs :
+<GetFreq.sh>
+
+example :
+sh libs/GetFreq.sh test.data ref.fasta > test.var
+
+This variation file is a tab seprated file that should have :
+
+-A fix header :
+-All positions from the reference as first field of each line
+-The reference allele from the wuhan sequence as seconde filed
+-The number of each possible allele summing to the number of sanple for each line :
+
+
+        POS   REF  A    C    G    T    .
+        1     A    100  0    0    0    0
+        2     T    0    0    0    100  0
+        3     T    0    0    0    100  0
+                     (...)
+        3495  A    100  0    0    0    0
+        3496  G    0    0    100  0    0
+        3497  G    0    0    100  0    0
+        3498  C    0    27   0    0    73
+        3499  T    0    0    0    100  0
+        3500  A    100  0    0    0    0
+
+####################################
+############  STEP 3 ###############
+####################################
+
+Generate a binary matrix with a set of desired SNPs:
+
+python createMatrixForPCA.py test.tsv test.var 10
+
+the 3 arguments are:
+ -  the tsv file previously generated (step 1)
+ -  the variation file previously generated (step 2)
+ -  the minimum number of sample that should cary a mutation for the mutation to be included in the final matrix
+ 
+ The script will generate 2 files each a python object in 2 files :
+ - test.data.snpNames_10_noref.pkl
+ - test.data.df_10_noref.pkl
+
+the filenames carry the input of the python script.
+
+
+
+####################################
+############  STEP 4 ###############
+####################################
+
+
+Use the jupyter notebook 
+1 to compute the PCA loadins
+2 project your data on the loadings
+3 plot the PCs
+
+
